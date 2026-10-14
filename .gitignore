@@ -1,0 +1,22 @@
+# Xcode
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# CocoaPods (not used, kept for safety)
+Pods/
+
+# macOS
+.DS_Store
+
+# XcodeGen output is regenerated from project.yml, don't commit it
