@@ -4,11 +4,15 @@ final class ReadyToSpeakViewModel: ObservableObject {
     let topicTitle: String
     @Published private(set) var isRecording = false
     @Published private(set) var elapsedSeconds = 0
+    /// Shows the "Your points" sheet.
+    @Published var showsPoints = false
+    let outline: Outline
 
     private let speakSeconds: Int
     private let onFinish: () -> Void
 
-    init(session: PracticeSession, onFinish: @escaping () -> Void) {
+    init(session: PracticeSession, outline: Outline = .sample, onFinish: @escaping () -> Void) {
+        self.outline = outline
         topicTitle = session.topic.title
         speakSeconds = session.speakSeconds
         self.onFinish = onFinish

@@ -43,6 +43,8 @@ enum Constants {
         static let ringGap: CGFloat = 4
         static let legendDot: CGFloat = 6
         static let topicCardMinHeight: CGFloat = 154
+        /// Room for two lines of the topic title, so the card never changes height.
+        static let topicTextHeight: CGFloat = 56
         static let chevron: CGFloat = 13
         static let editorHeight: CGFloat = 160
         static let streakStatLine: CGFloat = 44

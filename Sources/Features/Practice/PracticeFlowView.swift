@@ -6,6 +6,8 @@ struct PracticeFlowView: View {
     @Binding var path: [PracticeRoute]
     @StateObject private var chooseTopic = ChooseTopicViewModel()
     @State private var session = ChooseTopicViewModel().makeSession()
+    /// The points written on "Shape your thoughts", shown again while speaking.
+    @State private var outline = Outline.sample
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -21,6 +23,8 @@ struct PracticeFlowView: View {
         case .gatherThoughts:
             GatherThoughtsView(
                 session: session,
+                outline: outline,
+                onOutlineChange: { outline = $0 },
                 onBack: goBack,
                 onReady: { path.append(.readyToSpeak) }
             )
@@ -28,6 +32,7 @@ struct PracticeFlowView: View {
         case .readyToSpeak:
             ReadyToSpeakView(
                 session: session,
+                outline: outline,
                 onBack: goBack,
                 onFinish: { path.append(.congratulations) }
             )
@@ -47,6 +52,7 @@ struct PracticeFlowView: View {
 
     private func start() {
         session = chooseTopic.makeSession()
+        outline = .sample
         path.append(.gatherThoughts)
     }
 

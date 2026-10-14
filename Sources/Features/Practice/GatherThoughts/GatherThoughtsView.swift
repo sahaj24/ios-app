@@ -9,8 +9,18 @@ struct GatherThoughtsView: View {
     let onBack: () -> Void
     let onReady: () -> Void
 
-    init(session: PracticeSession, onBack: @escaping () -> Void, onReady: @escaping () -> Void) {
-        _viewModel = StateObject(wrappedValue: GatherThoughtsViewModel(session: session))
+    init(
+        session: PracticeSession,
+        outline: Outline = .sample,
+        onOutlineChange: @escaping (Outline) -> Void = { _ in },
+        onBack: @escaping () -> Void,
+        onReady: @escaping () -> Void
+    ) {
+        _viewModel = StateObject(wrappedValue: GatherThoughtsViewModel(
+            session: session,
+            outline: outline,
+            onOutlineChange: onOutlineChange
+        ))
         self.onBack = onBack
         self.onReady = onReady
     }

@@ -7,8 +7,13 @@ struct ReadyToSpeakView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let onBack: () -> Void
 
-    init(session: PracticeSession, onBack: @escaping () -> Void, onFinish: @escaping () -> Void) {
-        _viewModel = StateObject(wrappedValue: ReadyToSpeakViewModel(session: session, onFinish: onFinish))
+    init(
+        session: PracticeSession,
+        outline: Outline = .sample,
+        onBack: @escaping () -> Void,
+        onFinish: @escaping () -> Void
+    ) {
+        _viewModel = StateObject(wrappedValue: ReadyToSpeakViewModel(session: session, outline: outline, onFinish: onFinish))
         self.onBack = onBack
     }
 
@@ -17,7 +22,8 @@ struct ReadyToSpeakView: View {
             ScreenNavBar(
                 title: "Speaking",
                 onBack: onBack,
-                trailingSymbol: "list.bullet.rectangle"
+                trailingSymbol: "list.bullet.rectangle",
+                onTrailing: { viewModel.showsPoints = true }
             )
             Text("YOUR TOPIC")
                 .font(.swCaption)
@@ -52,6 +58,10 @@ struct ReadyToSpeakView: View {
         .padding(.horizontal, Spacing.screenHorizontal)
         .screenBackground()
         .onReceive(timer) { _ in viewModel.tick() }
+        .sheet(isPresented: $viewModel.showsPoints) {
+            OutlineReviewSheet(outline: viewModel.outline, onClose: { viewModel.showsPoints = false })
+                .presentationDetents([.medium, .large])
+        }
     }
 }
 

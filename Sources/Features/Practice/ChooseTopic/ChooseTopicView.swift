@@ -5,6 +5,8 @@ struct ChooseTopicView: View {
     @ObservedObject var viewModel: ChooseTopicViewModel
     let onStart: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         VStack(spacing: Spacing.s16) {
             ScreenHeading(title: "Choose Your Topic")
@@ -12,15 +14,21 @@ struct ChooseTopicView: View {
             TopicCard(
                 label: viewModel.cardLabel,
                 text: viewModel.cardText,
-                showsShuffle: viewModel.showsShuffle,
-                onShuffle: viewModel.shuffleTopic
+                ownText: $viewModel.ownTopic,
+                isEditable: viewModel.isOwnTopic,
+                isSpinning: viewModel.isSpinning,
+                onShuffle: { viewModel.shuffleTopic(animated: !reduceMotion) },
+                onPick: viewModel.openTopicPicker
             )
+            .sheet(isPresented: $viewModel.showsTopicPicker) { topicPicker }
             HStack(spacing: Spacing.sectionGap) {
                 timeChip(.preparation)
                 timeChip(.speaking)
             }
             Spacer()
             PrimaryButton(title: "Start", action: onStart)
+                .disabled(!viewModel.canStart)
+                .opacity(viewModel.canStart ? 1 : 0.4)
         }
         .padding(.horizontal, Spacing.screenHorizontal)
         .padding(.top, Spacing.s32 * 2)
@@ -35,6 +43,15 @@ struct ChooseTopicView: View {
             )
             .presentationDetents([.height(Constants.Size.customSheetHeight)])
         }
+    }
+
+    private var topicPicker: some View {
+        TopicPickerSheet(
+            onPick: viewModel.pick,
+            onRandom: { viewModel.randomTopic(in: $0, animated: !reduceMotion) },
+            onClose: { viewModel.showsTopicPicker = false }
+        )
+        .presentationDetents([.large])
     }
 
     private func timeChip(_ kind: TimeKind) -> some View {

@@ -44,6 +44,28 @@ final class GatherThoughtsViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.editingSection)
     }
 
+    func testSaveReportsTheWholeOutline() {
+        var reported: Outline?
+        let session = PracticeSession(topic: TopicProvider.defaultTopic, prepSeconds: 120, speakSeconds: 120)
+        let viewModel = GatherThoughtsViewModel(session: session) { reported = $0 }
+
+        viewModel.edit(.closing)
+        viewModel.draft = "Be kind."
+        viewModel.save()
+
+        XCTAssertEqual(reported?.closing, "Be kind.")
+        XCTAssertEqual(reported?.opening, viewModel.opening)
+    }
+
+    func testStartsFromTheGivenOutline() {
+        let session = PracticeSession(topic: TopicProvider.defaultTopic, prepSeconds: 120, speakSeconds: 120)
+        let outline = Outline(opening: "A", keyPoints: "B", closing: "C")
+
+        let viewModel = GatherThoughtsViewModel(session: session, outline: outline)
+
+        XCTAssertEqual(viewModel.outline, outline)
+    }
+
     func testCancelLeavesTextUnchanged() {
         let viewModel = makeViewModel()
         let original = viewModel.keyPoints

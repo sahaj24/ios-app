@@ -59,16 +59,16 @@ ios-app/
 │   │   │   ├── ActionButtonRow  ├── GlassCard        ├── GlassCircleButton
 │   │   │   ├── ListRow          ├── NavigationRowCard├── PrimaryButton
 │   │   │   ├── ScoreRings       ├── ScreenHeading    ├── ScreenNavBar
-│   │   │   └── SecondaryButton, SegmentedToggle, SpeakwellDivider
+│   │   │   └── SearchField, SecondaryButton, SegmentedToggle, SpeakwellDivider
 │   │   ├── Constants/           # Fixed control sizes
 │   │   ├── DesignSystem/        # Colors/, Typography/, Spacing/, Radius/, Backgrounds/, Animations/
 │   │   ├── Extensions/          # Color(hex:), hidden nav bar helper
 │   │   ├── Models/              # Small plain structs
-│   │   ├── Services/            # Mock sample-data providers
+│   │   ├── Services/            # Providers; DebateTopics/ holds the 2000 topics
 │   │   └── Utilities/           # TimeFormatter
 │   └── Features/
 │       ├── Practice/
-│       │   ├── ChooseTopic/     # View + ViewModel + Components/
+│       │   ├── ChooseTopic/     # View + ViewModel + Components/ (TopicCard, TopicPickerSheet, ...)
 │       │   ├── GatherThoughts/  # Editable outline (sheet editors)
 │       │   ├── ReadyToSpeak/
 │       │   ├── Congratulations/
@@ -162,9 +162,37 @@ flows into the Gather countdown and the Speaking timer.
   0:30 to 15:00. Limits live in `Core/Constants/Constants.swift` and the
   clamping is unit-tested.
 
+## Topics
+
+Topics come from `Core/Services/DebateTopics/DebateTopics.swift`: 20
+categories with 100 topics each (2000 in total). `TopicProvider` turns them
+into `TopicCategory` and `Topic` models and offers `randomTopic`, search and
+per-category lookups.
+
+On Choose Your Topic (Random topic tab):
+
+- **Shuffle** button: a roulette. The card text rolls through 14 topics,
+  fast first and slower at the end, then lands on the final one
+  (`RouletteSpin` builds the plan; `ChooseTopicViewModel` plays it). It never
+  lands on the topic already shown. With Reduce Motion on, the topic simply
+  changes.
+- **Pick a topic** link: opens a sheet (`TopicPickerSheet`) with a search
+  box and the 20 categories. Tap a category to see its 100 topics, tap a
+  topic to use it. The bottom button is **Random from all topics** (or
+  **Random from this category** once a category is open) and runs the same
+  roulette.
+- After "Random from this category", the shuffle button keeps drawing from
+  that category and the card label shows the category name. After a manually
+  picked topic, shuffle goes back to all topics.
+- Search matches the start of any word ("nato" finds "NATO expansion", not
+  "Pollinator").
+
+Folders: `ChooseTopic/Components/TopicCard`, `TopicPickerSheet`,
+`TopicPickerRow`; the shared search box is `Core/Components/SearchField`.
+
 ## Mock data
 
-Topics, scores, history and profile data are hard-coded in `Core/Services`.
+Scores, history, streak and profile data are hard-coded in `Core/Services`.
 There is no audio, networking or AI yet.
 
 ## How to add a new screen

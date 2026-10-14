@@ -1,53 +1,100 @@
 import SwiftUI
 
-/// Big card with the suggested topic and a shuffle button.
-/// Shuffling crossfades the topic text and turns the shuffle icon.
+/// Big card with the topic. In "Random topic" it has a shuffle button
+/// (roulette) and a small "Pick a topic" action. In "My own topic" the topic
+/// is a text box.
+///
+/// Smoothness rules for the roulette:
+/// - the text area has a fixed height, so the card never changes size;
+/// - frames change instantly (no per-frame animation), only the landing eases in.
 struct TopicCard: View {
     let label: String
     let text: String
-    let showsShuffle: Bool
+    @Binding var ownText: String
+    let isEditable: Bool
+    let isSpinning: Bool
     let onShuffle: () -> Void
+    let onPick: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var shuffleTurns = 0
 
     var body: some View {
         GlassCard {
             VStack(alignment: .leading, spacing: Spacing.s12) {
-                HStack {
-                    Image(systemName: "bubble.left")
-                    Text(label)
-                    Spacer()
-                    if showsShuffle {
-                        GlassCircleButton(systemName: "shuffle", action: shuffle)
-                            .rotationEffect(.degrees(Double(shuffleTurns) * 180))
-                    }
+                header
+                if isEditable {
+                    OwnTopicField(text: $ownText, placeholder: "Write your topic")
+                        .padding(.leading, Spacing.s4)
+                } else {
+                    topicText
+                    pickButton
                 }
-                .font(.swFootnote)
-                .foregroundColor(.swMuted)
-                .padding(.leading, Spacing.s4)
-                .frame(height: Constants.Size.glassButton)
-                Text(text)
-                    .font(.swTitle2)
-                    .foregroundColor(.swText)
-                    .padding(.leading, Spacing.s4)
-                    .contentTransition(.opacity)
-                    .animation(reduceMotion ? nil : .speakwellStandard, value: text)
             }
             .frame(minHeight: Constants.Size.topicCardMinHeight - Spacing.cardPadding * 2, alignment: .top)
         }
     }
 
-    private func shuffle() {
-        if !reduceMotion {
-            withAnimation(.speakwellStandard) { shuffleTurns += 1 }
+    private var header: some View {
+        HStack {
+            Image(systemName: "bubble.left")
+            Text(label)
+                .lineLimit(1)
+            Spacer()
+            if !isEditable {
+                GlassCircleButton(systemName: "shuffle", action: shuffle)
+                    .disabled(isSpinning)
+                    .accessibilityLabel("Shuffle topic")
+            }
         }
+        .font(.swFootnote)
+        .foregroundColor(.swMuted)
+        .padding(.leading, Spacing.s4)
+        .frame(height: Constants.Size.glassButton)
+    }
+
+    /// The topic. While spinning the text swaps instantly and is slightly
+    /// dimmed; when it lands it eases to full brightness.
+    private var topicText: some View {
+        Text(text)
+            .font(.swTitle2)
+            .foregroundColor(.swText)
+            .lineLimit(2)
+            .minimumScaleFactor(0.75)
+            .animation(nil, value: text)
+            .opacity(isSpinning ? 0.55 : 1)
+            .scaleEffect(isSpinning ? 0.98 : 1, anchor: .leading)
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: isSpinning)
+            .frame(maxWidth: .infinity, minHeight: Constants.Size.topicTextHeight, alignment: .topLeading)
+            .padding(.leading, Spacing.s4)
+    }
+
+    private var pickButton: some View {
+        Button(action: onPick) {
+            Label("Pick a topic", systemImage: "list.bullet")
+                .font(.swSubheadlineSemibold)
+                .foregroundColor(.swLavender)
+                .padding(.leading, Spacing.s4)
+                .frame(height: Constants.Size.glassButton, alignment: .leading)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.speakwellPressable)
+    }
+
+    private func shuffle() {
         onShuffle()
     }
 }
 
 #Preview {
-    TopicCard(label: "Suggested topic", text: "Is social media bringing us closer?", showsShuffle: true, onShuffle: {})
-        .padding()
-        .screenBackground()
+    TopicCard(
+        label: "Suggested topic",
+        text: "Is social media bringing us closer?",
+        ownText: .constant(""),
+        isEditable: false,
+        isSpinning: false,
+        onShuffle: {},
+        onPick: {}
+    )
+    .padding()
+    .screenBackground()
 }
