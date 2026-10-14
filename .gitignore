@@ -20,3 +20,6 @@ Pods/
 .DS_Store
 
 # XcodeGen output is regenerated from project.yml, don't commit it
+
+# Agent working files (plans, reviews, screenshots)
+.agents/
