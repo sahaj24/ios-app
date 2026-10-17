@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Thin horizontal line. Bright by default (History rows), pass a softer color for cards.
+/// Thin horizontal line. Soft by default; pass `.swDivider` for a brighter one.
 struct SpeakwellDivider: View {
-    var color: Color = .swDivider
+    var color: Color = .swBorder
 
     var body: some View {
         Rectangle()

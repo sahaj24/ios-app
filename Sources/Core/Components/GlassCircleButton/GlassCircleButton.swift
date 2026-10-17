@@ -11,8 +11,7 @@ struct GlassCircleButton: View {
                 .font(.swHeadline)
                 .foregroundColor(.swText)
                 .frame(width: Constants.Size.glassButton, height: Constants.Size.glassButton)
-                .background(Color.swGlassButton, in: Circle())
-                .overlay(Circle().strokeBorder(Color.swBorder, lineWidth: Constants.Size.hairline))
+                .glassSurface(in: Circle())
         }
         .buttonStyle(.speakwellPressable)
     }

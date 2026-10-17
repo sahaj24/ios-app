@@ -15,7 +15,7 @@ struct OutlineEditSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: Spacing.s20) {
+        VStack(spacing: Spacing.s16) {
             HStack {
                 Text(section.title)
                     .font(.swTitle2)
@@ -27,7 +27,6 @@ struct OutlineEditSheet: View {
             PrimaryButton(title: section.saveTitle, action: onSave)
                 .disabled(isEmpty)
                 .opacity(isEmpty ? 0.5 : 1)
-            Spacer(minLength: 0)
         }
         .padding(Spacing.s24)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

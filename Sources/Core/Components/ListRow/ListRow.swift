@@ -4,6 +4,7 @@ import SwiftUI
 struct ListRow: View {
     let title: String
     let caption: String
+    var isFavorite = false
 
     var body: some View {
         HStack(spacing: Spacing.s12) {
@@ -20,7 +21,13 @@ struct ListRow: View {
                     .font(.swFootnoteSemibold)
                     .foregroundColor(.swMuted)
             }
-            Spacer()
+            Spacer(minLength: Spacing.s8)
+            if isFavorite {
+                Image(systemName: "star.fill")
+                    .font(.swFootnote)
+                    .foregroundColor(.swLavender)
+                    .accessibilityLabel("Favorite")
+            }
             Image(systemName: "chevron.right")
                 .font(.system(size: Constants.Size.chevron, weight: .semibold))
                 .foregroundColor(.swMuted)

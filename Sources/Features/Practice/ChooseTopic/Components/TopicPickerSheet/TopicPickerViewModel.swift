@@ -52,6 +52,12 @@ final class TopicPickerViewModel: ObservableObject {
         searchText = ""
     }
 
+    /// Filter chip tapped: a category, or nil for "All".
+    func select(_ category: TopicCategory?) {
+        guard let category else { return back() }
+        open(category)
+    }
+
     func back() {
         selectedCategory = nil
         searchText = ""

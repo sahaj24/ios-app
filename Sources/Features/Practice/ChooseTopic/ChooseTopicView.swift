@@ -17,8 +17,11 @@ struct ChooseTopicView: View {
                 ownText: $viewModel.ownTopic,
                 isEditable: viewModel.isOwnTopic,
                 isSpinning: viewModel.isSpinning,
+                micSymbol: viewModel.micSymbol,
+                isMicEnabled: !viewModel.isMicDenied,
                 onShuffle: { viewModel.shuffleTopic(animated: !reduceMotion) },
-                onPick: viewModel.openTopicPicker
+                onPick: viewModel.openTopicPicker,
+                onMic: viewModel.toggleDictation
             )
             .sheet(isPresented: $viewModel.showsTopicPicker) { topicPicker }
             HStack(spacing: Spacing.sectionGap) {
@@ -34,6 +37,7 @@ struct ChooseTopicView: View {
         .padding(.top, Spacing.s32 * 2)
         .padding(.bottom, Constants.Size.tabBarClearance)
         .screenBackground()
+        .onDisappear(perform: viewModel.stopDictation)
         .sheet(item: $viewModel.customSheet) { kind in
             CustomTimeSheet(
                 kind: kind,

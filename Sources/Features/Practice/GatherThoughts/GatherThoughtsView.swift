@@ -55,7 +55,7 @@ struct GatherThoughtsView: View {
                 onCancel: viewModel.cancelEdit,
                 onSave: viewModel.save
             )
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.height(Constants.Size.outlineSheetHeight)])
         }
     }
 

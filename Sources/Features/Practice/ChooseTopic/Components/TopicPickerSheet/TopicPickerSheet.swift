@@ -13,6 +13,11 @@ struct TopicPickerSheet: View {
         VStack(spacing: Spacing.s16) {
             header
             SearchField(text: $viewModel.searchText, placeholder: viewModel.searchPlaceholder)
+            CategoryFilterBar(
+                categories: viewModel.categories,
+                selected: viewModel.selectedCategory,
+                onSelect: viewModel.select
+            )
             list
             PrimaryButton(title: viewModel.randomButtonTitle) {
                 onRandom(viewModel.selectedCategory)

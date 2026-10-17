@@ -34,6 +34,8 @@ targets:
         CFBundleDisplayName: Speakwell
         UILaunchScreen: {}
         UIUserInterfaceStyle: Dark
+        NSMicrophoneUsageDescription: Speakwell uses the microphone so you can say your topic out loud instead of typing it.
+        NSSpeechRecognitionUsageDescription: Speakwell turns what you say into text for your practice topic.
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UISupportedInterfaceOrientations~ipad:

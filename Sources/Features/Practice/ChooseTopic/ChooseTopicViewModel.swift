@@ -1,7 +1,9 @@
 import Foundation
 
 final class ChooseTopicViewModel: ObservableObject {
-    @Published var mode: TopicMode = .random
+    @Published var mode: TopicMode = .random {
+        didSet { if mode != .own { stopDictation() } }
+    }
     @Published private(set) var topic: Topic
     @Published private(set) var source: TopicSource = .suggested
     /// True while the roulette is spinning.
@@ -14,14 +16,66 @@ final class ChooseTopicViewModel: ObservableObject {
     /// Set to show the custom time sheet for that kind; nil hides it.
     @Published var customSheet: TimeKind?
 
+    /// True while the mic is listening on the "My own topic" tab.
+    @Published private(set) var isListening = false
+    /// True when speech or mic access was refused.
+    @Published private(set) var isMicDenied = false
+
     /// The running roulette. Tests can await it.
     private(set) var spinTask: Task<Void, Never>?
     /// 1 = normal speed, 0 = no waiting (used by tests).
     private let spinSpeed: Double
+    private let dictation: SpeechDictationService
 
-    init(topic: Topic = TopicProvider.randomTopic(), spinSpeed: Double = 1) {
+    init(
+        topic: Topic = TopicProvider.randomTopic(),
+        spinSpeed: Double = 1,
+        dictation: SpeechDictationService = SpeechDictationService()
+    ) {
         self.topic = topic
         self.spinSpeed = spinSpeed
+        self.dictation = dictation
+    }
+
+    // MARK: Dictation
+
+    /// SF Symbol for the mic button.
+    var micSymbol: String {
+        if isMicDenied { return "mic.slash.fill" }
+        return isListening ? "stop.fill" : "mic.fill"
+    }
+
+    func toggleDictation() {
+        if isListening {
+            stopDictation()
+            return
+        }
+        dictation.requestPermission { [weak self] granted in
+            guard let self else { return }
+            self.isMicDenied = !granted
+            if granted { self.startDictation() }
+        }
+    }
+
+    func stopDictation() {
+        dictation.stop()
+        isListening = false
+    }
+
+    private func startDictation() {
+        // Spoken words are added after what is already typed.
+        let typed = trimmedOwnTopic
+        do {
+            try dictation.start(
+                onText: { [weak self] spoken in
+                    self?.ownTopic = typed.isEmpty ? spoken : typed + " " + spoken
+                },
+                onFinish: { [weak self] in self?.isListening = false }
+            )
+            isListening = true
+        } catch {
+            isListening = false
+        }
     }
 
     // MARK: Card text

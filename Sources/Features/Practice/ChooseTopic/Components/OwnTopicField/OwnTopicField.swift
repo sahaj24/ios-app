@@ -20,7 +20,9 @@ struct OwnTopicField: View {
         .foregroundColor(.swText)
         .tint(.swLavender)
         .textInputAutocapitalization(.sentences)
-        .frame(maxWidth: .infinity, minHeight: Constants.Size.topicTextHeight, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .contentShape(Rectangle())
+        .onTapGesture { isFocused = true }
         .focused($isFocused)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {

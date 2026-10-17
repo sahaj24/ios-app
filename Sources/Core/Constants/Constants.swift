@@ -42,11 +42,15 @@ enum Constants {
         static let ringLine: CGFloat = 14
         static let ringGap: CGFloat = 4
         static let legendDot: CGFloat = 6
-        static let topicCardMinHeight: CGFloat = 154
-        /// Room for two lines of the topic title, so the card never changes height.
+        /// Room for two lines of the topic title.
         static let topicTextHeight: CGFloat = 56
+        /// Fixed inner height of the topic card (header + text + pick button),
+        /// so it is identical in "Random topic" and "My own topic".
+        static let topicCardContentHeight: CGFloat = glassButton * 2 + topicTextHeight + 24
         static let chevron: CGFloat = 13
-        static let editorHeight: CGFloat = 160
+        static let editorHeight: CGFloat = 120
+        /// Key points sheet: header + editor + save button + paddings.
+        static let outlineSheetHeight: CGFloat = 300
         static let streakStatLine: CGFloat = 44
         static let streakLongestColumn: CGFloat = 116
         static let streakWeekHeight: CGFloat = 89
@@ -60,9 +64,8 @@ enum Constants {
         static let streakTotalRow: CGFloat = 40
         static let milestoneBadge: CGFloat = 68
         static let milestoneSeal: CGFloat = 52
-        static let customSheetHeight: CGFloat = 465
-        static let timeWheelHeight: CGFloat = 200
-        static let timeWheelUnitInset: CGFloat = 12
+        static let customSheetHeight: CGFloat = 440
+        static let timeWheelHeight: CGFloat = 216
         static let laurelSymbol: CGFloat = 72
     }
 }

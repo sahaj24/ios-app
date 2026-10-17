@@ -29,20 +29,16 @@ struct CustomTimeSheet: View {
             Text(kind.subtitle)
                 .font(.swSubheadline)
                 .foregroundColor(.swMuted)
-            HStack(spacing: 0) {
-                TimeWheelPicker(selection: $minutes, values: kind.minuteValues, unit: "min", padsDigits: false)
-                TimeWheelPicker(selection: $seconds, values: Array(0..<Constants.Session.secondsPerMinute), unit: "sec", padsDigits: true)
-            }
+            TimeWheelPicker(minutes: $minutes, seconds: $seconds, minuteValues: kind.minuteValues)
             Text(TimeFormatter.summaryText(seconds: clampedSeconds))
                 .font(.swTitle3)
                 .foregroundColor(.swText)
             Text(kind.caption)
                 .font(.swFootnote)
                 .foregroundColor(.swMuted)
-            Spacer(minLength: 0)
         }
         .padding(Spacing.s20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color.swSurface.ignoresSafeArea())
     }
 

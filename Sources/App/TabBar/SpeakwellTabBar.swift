@@ -20,9 +20,7 @@ struct SpeakwellTabBar: View {
         }
         .padding(Constants.Size.segmentedInset)
         .frame(height: Constants.Size.tabBarHeight)
-        .background(.ultraThinMaterial, in: Capsule())
-        .background(Color.swRaised.opacity(0.5), in: Capsule())
-        .overlay(Capsule().strokeBorder(Color.swBorder, lineWidth: Constants.Size.hairline))
+        .glassSurface(in: Capsule())
         .padding(.horizontal, Constants.Size.tabBarInset)
         .padding(.bottom, Constants.Size.tabBarBottomGap)
     }

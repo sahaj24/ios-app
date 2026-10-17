@@ -13,8 +13,11 @@ struct TopicCard: View {
     @Binding var ownText: String
     let isEditable: Bool
     let isSpinning: Bool
+    let micSymbol: String
+    let isMicEnabled: Bool
     let onShuffle: () -> Void
     let onPick: () -> Void
+    let onMic: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -30,7 +33,8 @@ struct TopicCard: View {
                     pickButton
                 }
             }
-            .frame(minHeight: Constants.Size.topicCardMinHeight - Spacing.cardPadding * 2, alignment: .top)
+            // Same fixed height in both modes, so the card never jumps.
+            .frame(height: Constants.Size.topicCardContentHeight, alignment: .top)
         }
     }
 
@@ -40,7 +44,11 @@ struct TopicCard: View {
             Text(label)
                 .lineLimit(1)
             Spacer()
-            if !isEditable {
+            if isEditable {
+                GlassCircleButton(systemName: micSymbol, action: onMic)
+                    .disabled(!isMicEnabled)
+                    .accessibilityLabel("Speak your topic")
+            } else {
                 GlassCircleButton(systemName: "shuffle", action: shuffle)
                     .disabled(isSpinning)
                     .accessibilityLabel("Shuffle topic")
@@ -92,8 +100,11 @@ struct TopicCard: View {
         ownText: .constant(""),
         isEditable: false,
         isSpinning: false,
+        micSymbol: "mic.fill",
+        isMicEnabled: true,
         onShuffle: {},
-        onPick: {}
+        onPick: {},
+        onMic: {}
     )
     .padding()
     .screenBackground()
